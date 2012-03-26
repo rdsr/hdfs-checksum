@@ -18,5 +18,4 @@ public class MD5MD5CRCSecurityProvider extends Provider {
             registered = true;
         }
     }
-
 }
