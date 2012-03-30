@@ -11,35 +11,43 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
 
     public static final String ALGORITHM_NAME = "MD5MD5CRC";
 
-    private final int bytesPerCRC;
-    private final int crcPerBlock;
+    private final int bytesPerCrc;
+    private final int crcsPerBlock;
     private int crcCount;
     private int bytesRead;
 
     private final byte[] crc = new byte[4];
-    private DataOutputBuffer blockChecksumBuffer, md5DigestBuffer;
+    private final DataOutputBuffer blockChecksumBuffer;
 
-    private DataChecksum checksum;
-    private MessageDigest md5Digest;
+    private DataOutputBuffer md5DigestBuffer;
 
-    private final int checksumType;
+    private final DataChecksum checksum;
+    private final MessageDigest md5Digest;
 
-    public MD5MD5CRCMessageDigest(int bytesPerCRC, int crcPerBlock, int checksumType) throws NoSuchAlgorithmException {
+    public MD5MD5CRCMessageDigest(
+            int bytesPerChecksum, int crcsPerBlock, int checksumType) throws NoSuchAlgorithmException {
         super(ALGORITHM_NAME);
-        this.checksumType = checksumType;
-        this.bytesPerCRC = bytesPerCRC;
-        this.crcPerBlock = crcPerBlock;
-        initialize();
+
+        this.bytesPerCrc = bytesPerChecksum;
+        this.crcsPerBlock = crcsPerBlock;
+        
+        System.err.println(bytesPerChecksum + " " + crcsPerBlock);
+
+        md5Digest = MessageDigest.getInstance("MD5");
+        blockChecksumBuffer = new DataOutputBuffer();
+        md5DigestBuffer = new DataOutputBuffer();
+        checksum = DataChecksum.newDataChecksum(checksumType, bytesPerChecksum);
     }
 
     @Override
     protected byte[] engineDigest() {
         try {
+            System.err.println("bytes remaining " + bytesRead);
             if (bytesRead > 0)
-                updateChecksumBuffer();
+                flushCrcToBuffer();
 
             if (blockChecksumBuffer.getLength() > 0)
-                updateMD5DigestBuffer();
+                calculateMD5OfBlockCrcs();
 
             md5Digest.update(md5DigestBuffer.getData());
             return md5Digest.digest();
@@ -53,21 +61,22 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     protected void engineReset() {
         // TODO: check this
         blockChecksumBuffer.reset();
-        md5DigestBuffer.reset();
+        md5DigestBuffer = new DataOutputBuffer();
 
         checksum.reset();
         md5Digest.reset();
 
         bytesRead = 0;
+        crcCount = 0;   
     }
 
     @Override
     protected void engineUpdate(byte input) {
-        // checksum.update(input);
+        checksum.update(input);
         bytesRead += 1;
         try {
-            if (bytesRead == bytesPerCRC)
-                updateChecksumBuffer();
+            if (bytesRead == bytesPerCrc)
+                flushCrcToBuffer();
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -76,53 +85,52 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     @Override
     protected void engineUpdate(byte[] input, int offset, int len) {
         int bytesRemaining = len;
-        final int bytesToComplete = bytesPerCRC - bytesRead;
+        final int bytesToComplete = bytesPerCrc - bytesRead;
+        System.err.println("bytes remaining " + bytesRemaining);
+        System.err.println("bytestocomplete " + bytesToComplete);
+        
         int i = offset;
         try {
             if (bytesRemaining >= bytesToComplete) {
-                checksum.update(input, offset, bytesToComplete);
+                checksum.update(input, i, bytesToComplete);
                 bytesRemaining -= bytesToComplete;
                 i += bytesToComplete;
-                updateChecksumBuffer();
+                flushCrcToBuffer();
             }
 
-            while (bytesRemaining >= bytesPerCRC) {
-                checksum.update(input, offset + i, bytesPerCRC);
-                i += bytesPerCRC;
-                bytesRemaining -= bytesPerCRC;
-                updateChecksumBuffer();
+            while (bytesRemaining >= bytesPerCrc) {
+                checksum.update(input, i, bytesPerCrc);
+                bytesRemaining -= bytesPerCrc;
+                i += bytesPerCrc;
+                flushCrcToBuffer();
             }
 
-            if (bytesRemaining > 0)
-                ;
-            checksum.update(input, offset + i, bytesRemaining);
+            if (bytesRemaining > 0) {
+                checksum.update(input, i, bytesRemaining);
+                bytesRead += bytesRemaining;
+            }
+
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void updateChecksumBuffer() throws IOException {
-        final int crcLen = checksum.writeValue(crc, 0, true);
+    private void flushCrcToBuffer() throws IOException {
+        final int crcLen = checksum.writeValue(crc, 0, true); // true -> resets checksum
         blockChecksumBuffer.write(crc, 0, crcLen);
 
         bytesRead = 0;
         crcCount += 1;
-        if (crcCount == crcPerBlock)
-            updateMD5DigestBuffer();
+
+        if (crcCount == crcsPerBlock)
+            calculateMD5OfBlockCrcs();
     }
 
-    private void updateMD5DigestBuffer() throws IOException {
+    private void calculateMD5OfBlockCrcs() throws IOException {
         md5Digest.update(blockChecksumBuffer.getData(), 0, blockChecksumBuffer.getLength());
         md5DigestBuffer.write(md5Digest.digest());
         blockChecksumBuffer.reset();
         md5Digest.reset();
         crcCount = 0;
-    }
-
-    private void initialize() throws NoSuchAlgorithmException {
-        md5Digest = MessageDigest.getInstance("MD5");
-        blockChecksumBuffer = new DataOutputBuffer();
-        md5DigestBuffer = new DataOutputBuffer();
-        checksum = DataChecksum.newDataChecksum(checksumType, bytesPerCRC);
     }
 }

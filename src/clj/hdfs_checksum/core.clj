@@ -17,7 +17,9 @@
                       ([_])
                       ([_ _ _])))]
     (io/copy in out))
-  (-> md .digest Hex/encodeHex String.))
+  (-> md .digest
+      Hex/encodeHex
+      String.))
 
 (defn file-checksum
   "Computes a standard checksum of a (hdfs) file.
@@ -32,8 +34,8 @@
 
 (defn- checksum-type-keyword->int
   [key]
-  (get {:crc32c DataChecksum/CHECKSUM_CRC32C
-        :crc32 DataChecksum/CHECKSUM_CRC32}
+  (get {:CRC32C DataChecksum/CHECKSUM_CRC32C
+        :CRC32 DataChecksum/CHECKSUM_CRC32}
        key
        DataChecksum/CHECKSUM_CRC32))
 
@@ -42,10 +44,10 @@
    which matches how hadoop/hdfs computes
    checksums for it's files."
   [path checksum-type configuration]
-  (let [bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
-        crc-per-block (crc-per-block configuration)
-        md (MD5MD5CRCMessageDigest. bytes-per-crc
-                                    crc-per-block
+  (let [bytes-per-checksum (.getInt configuration "io.bytes.per.checksum" 512)
+        checksums-per-block (checksums-per-block configuration)
+        md (MD5MD5CRCMessageDigest. bytes-per-checksum
+                                    checksums-per-block
                                     (checksum-type-keyword->int checksum-type))]
     (with-open [in (FileInputStream. path)]
       (compute-checksum in md))))
