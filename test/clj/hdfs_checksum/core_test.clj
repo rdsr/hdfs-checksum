@@ -89,16 +89,16 @@
    bytes per checksum: 256
    block size:         256
    algorithm:          CRC32"
-  (let [[local-file hdfs-path] (preprocess "test1" 1023 *configuration* 256 256 :CRC32C)
+  (let [[local-file hdfs-path] (preprocess "test1" 1023 *configuration* 256 256 :CRC32)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
-           (hdfs-checksum local-file :CRC32C *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)     ; expected
+           (hdfs-checksum local-file :CRC32 *configuration*)))))  ; computed
 
 (deftest verify-6
   "file size:          29
    bytes per checksum: 29
    block size:         29
-   algorithm:          CRC32"
+   algorithm:          CRC32C"
   (let [[local-file hdfs-path] (preprocess "test1" 29 *configuration* 29 29 :CRC32C)
         fs (FileSystem/get *configuration*)]
     (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
