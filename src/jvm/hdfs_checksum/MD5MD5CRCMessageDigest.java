@@ -1,3 +1,5 @@
+package hdfs_checksum;
+
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,8 +34,19 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
 
     @Override
     protected byte[] engineDigest() {
-        md5Digest.update(md5DigestBuffer.getData());
-        return md5Digest.digest();
+        try {
+            if (bytesRead > 0)
+                updateChecksumBuffer();
+
+            if (blockChecksumBuffer.getLength() > 0)
+                updateMD5DigestBuffer();
+
+            md5Digest.update(md5DigestBuffer.getData());
+            return md5Digest.digest();
+
+        } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -50,7 +63,7 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
 
     @Override
     protected void engineUpdate(byte input) {
-        checksum.update(input);
+        // checksum.update(input);
         bytesRead += 1;
         try {
             if (bytesRead == bytesPerCRC)
@@ -81,7 +94,8 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
             }
 
             if (bytesRemaining > 0)
-                checksum.update(input, offset + i, bytesRemaining);
+                ;
+            checksum.update(input, offset + i, bytesRemaining);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
@@ -100,9 +114,9 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     private void updateMD5DigestBuffer() throws IOException {
         md5Digest.update(blockChecksumBuffer.getData(), 0, blockChecksumBuffer.getLength());
         md5DigestBuffer.write(md5Digest.digest());
+        blockChecksumBuffer.reset();
         md5Digest.reset();
         crcCount = 0;
-        blockChecksumBuffer.reset();
     }
 
     private void initialize() throws NoSuchAlgorithmException {

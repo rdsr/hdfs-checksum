@@ -1,3 +1,5 @@
+package hdfs_checksum;
+
 import java.security.MessageDigest;
 import java.security.Provider;
 import java.security.Security;
