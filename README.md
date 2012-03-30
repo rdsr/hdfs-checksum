@@ -4,7 +4,7 @@ hdfs-checksum contains utility functions to calculate checksums
 (both standard and distributed) of hdfs and local files.
 
 ##Usage
-1. Calculate distributed checksums (how hdfs filesystem calculates
+Calculate distributed checksums (how hdfs filesystem calculates
 for its files) of local files.
 
       user> (hdfs-checksum "/tmp/file_1" :CRC32C configuration)
@@ -25,7 +25,7 @@ following parameters set.
 * dfs.blocksize
 
 
-2. Calculate standard checksum of a hdfs file.
+Calculate standard checksum of a hdfs file.
 
       user> (file-checksum "hdfs://localhost:63372/user/rdsr/hdfs_file" :MD5 conf)
       "7622214b8536afe7b89b1c6606069b0d"
