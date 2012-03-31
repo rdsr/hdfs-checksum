@@ -44,10 +44,10 @@
    which matches how hadoop/hdfs computes
    checksums for it's files."
   [path checksum-type configuration]
-  (let [bytes-per-checksum (.getInt configuration "io.bytes.per.checksum" 512)
-        checksums-per-block (checksums-per-block configuration)
-        md (MD5MD5CRCMessageDigest. bytes-per-checksum
-                                    checksums-per-block
+  (let [bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
+        crcs-per-block (crcs-per-block configuration)
+        md (MD5MD5CRCMessageDigest. bytes-per-crc
+                                    crcs-per-block
                                     (checksum-type-keyword->int checksum-type))]
     (with-open [in (FileInputStream. path)]
       (compute-checksum in md))))

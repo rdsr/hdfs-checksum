@@ -5,12 +5,12 @@
            [org.apache.hadoop.fs FileChecksum]
            [org.apache.commons.codec.binary Hex]))
 
-(defn checksums-per-block
+(defn crcs-per-block
   [^Configuration configuration]
-  (let [bytes-per-checksum (.getInt configuration "io.bytes.per.checksum" 512)
+  (let [bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
         blocksize (or (.get configuration "dfs.blocksize")  ;; hadoop 0.23
                       (.get configuration "dfs.block.size"))] ;; hadoop 0.20.x
-    (/ (Integer/parseInt blocksize) bytes-per-checksum)))
+    (/ (Integer/parseInt blocksize) bytes-per-crc)))
 
 (defn checksum->str
   "Utility method to extract checksum out
