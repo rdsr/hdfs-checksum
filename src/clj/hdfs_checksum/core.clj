@@ -25,10 +25,10 @@
   "Computes a standard checksum of a (hdfs) file.
    The file is accessed through the hadoop
    FileSystem api"
-  [path algorithm ^Configuration conf]
-  (let [fs (FileSystem/get conf)
+  [path algorithm ^Configuration configuration]
+  (let [fs (FileSystem/get configuration)
         path (Path. path)
-        md (MessageDigest/getInstance algorithm)]
+        md (MessageDigest/getInstance (name algorithm))]
     (with-open [in (.open fs path)]
       (compute-checksum in md))))
 

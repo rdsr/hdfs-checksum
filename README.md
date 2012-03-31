@@ -17,17 +17,21 @@ for its files) of local files.
         which matches how hadoop/hdfs computes checksums
         for it's files.
 
-configuration is Hadoop's Configuration class. It should have the
+configuration is Hadoop's Configuration class. It should atleast have the
 following parameters set.
 
 * dfs.checksum.type (default CRC32)
 * io.bytes.per.checksum (default 512)
 * dfs.blocksize
 
+A good way to appy the necessary paramaters to configuration is to add hadoop's
+core-site.xml, hdfs-site.xml and mapred-site.xml to classpath before constructing
+Configuration object.
+
 
 Calculate standard checksum of a hdfs file.
 
-      user> (file-checksum "hdfs://localhost:63372/user/rdsr/hdfs_file" :MD5 conf)
+      user> (file-checksum "hdfs://localhost:63372/user/rdsr/hdfs_file" :MD5 configuration)
       "7622214b8536afe7b89b1c6606069b0d"
       user> (clojure.repl/doc file-checksum)
       -------------------------
