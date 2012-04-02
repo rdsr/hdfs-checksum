@@ -35,6 +35,7 @@ java -cp "lib/*:hdfs-checksum-1.0.jar:conf clojure.main src/clj/hdfs_checksum/co
 
 
 ### Repl
+      user>(use 'hdfs-checksum.core)
       user> (hdfs-checksum "/tmp/file" configuration)
       "7b5166eb3abb113de7c7219872e7b1f4"
       user>(clojure.repl/doc hdfs-checksum)
@@ -54,6 +55,7 @@ A good way to apply the necessary paramaters to configuration is to add hadoop's
 core-site.xml, hdfs-site.xml and mapred-site.xml to classpath before constructing
 Configuration object.
 
+      user>(use 'hdfs-checksum.core)
       user> (file-checksum "hdfs://localhost:63372/user/rdsr/tmp/file" :MD5 configuration)
       "7622214b8536afe7b89b1c6606069b0d"
       user> (clojure.repl/doc file-checksum)
