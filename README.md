@@ -6,22 +6,31 @@ hdfs-checksum contains utility functions to calculate checksums
 ##Usage
 ### Command line
 Run the following commands
+
 lein deps
+
 lein compile
+
 lein jar
 
 Create a folder conf and add hadoop's site xmls in it. Be sure that atleast the following
-properties are set
+properties are set.
+
 * dfs.blocksize
 
 Defaults are taken for the following properties if nothing is specified
+
 * dfs.checksum.type (default CRC32)
 * io.bytes.per.checksum (default 512)
 
-Calculate the distributed checksum of a local file
+
+Calculate the distributed checksum of a local file.
+
 java -cp "lib/*:hdfs-checksum-1.0.jar:conf>" clojure.main src/clj/hdfs_checksum/command-line.clj /tmp/file
 
-Calculate standard checksum of a hdfs file
+
+Calculate standard checksum of a hdfs file.
+
 java -cp "lib/*:hdfs-checksum-1.0.jar:conf clojure.main src/clj/hdfs_checksum/command-line.clj hdfs://<namenode>:<port>/tmp/file MD5
 
 
