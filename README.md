@@ -26,16 +26,16 @@ Defaults are taken for the following properties if nothing is specified
 
 Calculate the distributed checksum of a local file.
 
-java -cp "lib/*:hdfs-checksum-1.0.jar:conf>" clojure.main src/clj/hdfs_checksum/command-line.clj /tmp/file
+java -cp "lib/*:hdfs-checksum-1.0.jar:conf" clojure.main src/clj/hdfs_checksum/command-line.clj /tmp/file
 
 
-Calculate standard checksum of a hdfs file.
+Calculate MD5 checksum of a hdfs file.
 
 java -cp "lib/*:hdfs-checksum-1.0.jar:conf clojure.main src/clj/hdfs_checksum/command-line.clj hdfs://<namenode>:<port>/tmp/file MD5
 
 
 ### Repl
-      user> (hdfs-checksum "/tmp/file_1" configuration)
+      user> (hdfs-checksum "/tmp/file" configuration)
       "7b5166eb3abb113de7c7219872e7b1f4"
       user>(clojure.repl/doc hdfs-checksum)
       -------------------------
@@ -54,7 +54,7 @@ A good way to apply the necessary paramaters to configuration is to add hadoop's
 core-site.xml, hdfs-site.xml and mapred-site.xml to classpath before constructing
 Configuration object.
 
-      user> (file-checksum "hdfs://localhost:63372/user/rdsr/hdfs_file" :MD5 configuration)
+      user> (file-checksum "hdfs://localhost:63372/user/rdsr/tmp/file" :MD5 configuration)
       "7622214b8536afe7b89b1c6606069b0d"
       user> (clojure.repl/doc file-checksum)
       -------------------------
