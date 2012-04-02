@@ -32,10 +32,10 @@
     (with-open [in (.open fs path)]
       (compute-checksum in md))))
 
-(defn- checksum-type-keyword->int
+(defn- checksum-type-string->int
   [key]
-  (get {:CRC32C DataChecksum/CHECKSUM_CRC32C
-        :CRC32 DataChecksum/CHECKSUM_CRC32}
+  (get {"CRC32C" DataChecksum/CHECKSUM_CRC32C
+        "CRC32" DataChecksum/CHECKSUM_CRC32}
        key
        DataChecksum/CHECKSUM_CRC32))
 
@@ -43,11 +43,12 @@
   "Computes the checksum of a local file in a way
    which matches how hadoop/hdfs computes
    checksums for it's files."
-  [path checksum-type configuration]
-  (let [bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
+  [path configuration]
+  (let [checksum-type (.get configuration "dfs.checksum.type" "CRC32")
+        bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
         crcs-per-block (crcs-per-block configuration)
         md (MD5MD5CRCMessageDigest. bytes-per-crc
                                     crcs-per-block
-                                    (checksum-type-keyword->int checksum-type))]
+                                    (checksum-type-string->int checksum-type))]
     (with-open [in (FileInputStream. path)]
       (compute-checksum in md))))

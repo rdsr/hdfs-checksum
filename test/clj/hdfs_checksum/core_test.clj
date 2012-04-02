@@ -51,8 +51,8 @@
    algorithm:          CRC32"
   (let [[local-file hdfs-path] (preprocess "test1" 235 *configuration* 512 1024 :CRC32)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)     ; expected
-           (hdfs-checksum local-file :CRC32 *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str) ; expected
+           (hdfs-checksum local-file *configuration*)))))     ; computed
 
 (deftest verify-2
   "file size:          1024
@@ -61,8 +61,8 @@
    algorithm:          CRC32C"
   (let [[local-file hdfs-path] (preprocess "test1" 1024 *configuration* 512 1024 :CRC32C)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
-           (hdfs-checksum local-file :CRC32C *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)  ; expected
+           (hdfs-checksum local-file *configuration*)))))      ; computed
 
 (deftest verify-3
   "file size:          0
@@ -71,8 +71,8 @@
    algorithm:          CRC32C"
   (let [[local-file hdfs-path] (preprocess "test1" 0 *configuration* 512 1024 :CRC32C)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
-           (hdfs-checksum local-file :CRC32C *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)  ; expected
+           (hdfs-checksum local-file *configuration*)))))      ; computed
 
 (deftest verify-4
   "file size:          1023
@@ -81,8 +81,8 @@
    algorithm:          CRC32C"
   (let [[local-file hdfs-path] (preprocess "test1" 1023 *configuration* 256 1024 :CRC32C)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
-           (hdfs-checksum local-file :CRC32C *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)  ; expected
+           (hdfs-checksum local-file *configuration*)))))      ; computed
 
 (deftest verify-5
   "file size:          29
@@ -91,8 +91,8 @@
    algorithm:          CRC32"
   (let [[local-file hdfs-path] (preprocess "test1" 1023 *configuration* 256 256 :CRC32)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)     ; expected
-           (hdfs-checksum local-file :CRC32 *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str) ; expected
+           (hdfs-checksum local-file *configuration*)))))     ; computed
 
 (deftest verify-6
   "file size:          29
@@ -101,8 +101,8 @@
    algorithm:          CRC32C"
   (let [[local-file hdfs-path] (preprocess "test1" 29 *configuration* 29 29 :CRC32C)
         fs (FileSystem/get *configuration*)]
-    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)      ; expected
-           (hdfs-checksum local-file :CRC32C *configuration*)))))  ; computed
+    (is (= (-> fs (.getFileChecksum hdfs-path) checksum->str)  ; expected
+           (hdfs-checksum local-file *configuration*)))))      ; computed
 
 (defn cluster-fixture [f]
   (binding [*configuration* (Configuration.)]

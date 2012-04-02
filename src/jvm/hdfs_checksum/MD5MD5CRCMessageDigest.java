@@ -30,8 +30,6 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
 
         this.bytesPerCrc = bytesPerChecksum;
         this.crcsPerBlock = crcsPerBlock;
-        
-        System.err.println(bytesPerChecksum + " " + crcsPerBlock);
 
         md5Digest = MessageDigest.getInstance("MD5");
         blockChecksumBuffer = new DataOutputBuffer();
@@ -42,7 +40,6 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     @Override
     protected byte[] engineDigest() {
         try {
-            System.err.println("bytes remaining " + bytesRead);
             if (bytesRead > 0)
                 flushCrcToBuffer();
 
@@ -67,7 +64,7 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
         md5Digest.reset();
 
         bytesRead = 0;
-        crcCount = 0;   
+        crcCount = 0;
     }
 
     @Override
@@ -86,9 +83,6 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     protected void engineUpdate(byte[] input, int offset, int len) {
         int bytesRemaining = len;
         final int bytesToComplete = bytesPerCrc - bytesRead;
-        System.err.println("bytes remaining " + bytesRemaining);
-        System.err.println("bytestocomplete " + bytesToComplete);
-        
         int i = offset;
         try {
             if (bytesRemaining >= bytesToComplete) {
