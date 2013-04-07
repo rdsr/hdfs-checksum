@@ -25,7 +25,7 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
     private final MessageDigest md5Digest;
 
     public MD5MD5CRCMessageDigest(
-            int bytesPerChecksum, int crcsPerBlock, int checksumType) throws NoSuchAlgorithmException {
+            int bytesPerChecksum, int crcsPerBlock, DataChecksum.Type type) throws NoSuchAlgorithmException {
         super(ALGORITHM_NAME);
 
         this.bytesPerCrc = bytesPerChecksum;
@@ -34,7 +34,7 @@ public class MD5MD5CRCMessageDigest extends MessageDigest {
         md5Digest = MessageDigest.getInstance("MD5");
         blockChecksumBuffer = new DataOutputBuffer();
         md5DigestBuffer = new DataOutputBuffer();
-        checksum = DataChecksum.newDataChecksum(checksumType, bytesPerChecksum);
+        checksum = DataChecksum.newDataChecksum(type, bytesPerChecksum);
     }
 
     @Override

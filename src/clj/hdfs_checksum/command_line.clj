@@ -3,14 +3,19 @@
   (:import [java.net URI]
            [org.apache.hadoop.conf Configuration]))
 
-(defn run [[path & args]]
-  (let [scheme (.getScheme (URI. path))]
+(defn run [[path chcksm-knd algorithm]]
+  (let [scheme (.getScheme (URI. path))
+        conf (Configuration.)]
     (cond
-     (= "hdfs" scheme)
-     (let [algorithm (first args)]
-       (println (file-checksum path algorithm (Configuration.))))
-     (or (nil? scheme)
-         (= "file" scheme))
-     (println (hdfs-checksum path (Configuration.))))))
+     (and (= "local" chcksm-knd) (= "hdfs" scheme))
+     (println (file-checksum path algorithm conf))
+     (and (= "block" chcksm-knd) (= "hdfs" scheme))
+     (println (block-checksums path conf))
+     (and (= "hdfs" chcksm-knd)
+          (or (nil? scheme) (= "file" scheme)))
+     (println (hdfs-checksum path conf))
+     :else (println "Couldn't determine which checksum routine to call for "
+                    "Args: " path " " chcksm-knd " " algorithm ".Please check "
+                    "documentation"))))
 
 (run *command-line-args*)

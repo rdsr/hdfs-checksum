@@ -1,70 +1,65 @@
 #hdfs-checksum
 
-hdfs-checksum contains utility functions to calculate checksums
-(both standard and distributed) of hdfs and local files.
+hdfs-checksum contains utility functions to
+   * compute md5 checksum of a hdfs file. The result would be such that as if you computed md5 of a local file. (Note: Filesystem.getFileChecksum() will not give the same checksum as this, the Filesytem API call will compute md5 of md5 of CRC32 checksums
 
-##Usage
-### Command line
-Run the following commands
+   * compute distributed (md5 of md5 of crc32 checksums) of a local file. The result would be such that as if you called Filesystem.getFileChecksum() on a local file
 
-lein deps
+   * compute block level checksums for each block a hdfs file. The returned data structure is a map, something like
+     {:bytes-per-crc 512
+      :crc-per-block 131072
+      :checksum-type #<Type CRC32C>
+      :checksums ({:id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]}
+                  {:id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})
+     }
 
-lein compile
 
-lein jar
+## Usage
+## lein uberjar
+## java -cp "target/*:conf" clojure.main
 
-Create a folder conf and add hadoop's site xmls in it. Be sure that atleast the following
-properties are set.
+Make sure that the conf folder contains the hadoop cluster's configuration against which you want to work.
+The configuration should atleast have the following parameters set.
 
 * dfs.blocksize
-
-Defaults are taken for the following properties if nothing is specified
-
-* dfs.checksum.type (default CRC32)
-* io.bytes.per.checksum (default 512)
-
-
-Calculate the distributed checksum of a local file.
-
-java -cp "lib/*:hdfs-checksum-1.0.jar:conf" clojure.main src/clj/hdfs_checksum/command-line.clj /tmp/file
-
-
-Calculate MD5 checksum of a hdfs file.
-
-java -cp "lib/*:hdfs-checksum-1.0.jar:conf clojure.main src/clj/hdfs_checksum/command-line.clj hdfs://<namenode>:<port>/tmp/file MD5
-
 
 ### Repl
-      user>(use 'hdfs-checksum.core)
-      user> (hdfs-checksum "/tmp/file" configuration)
-      "7b5166eb3abb113de7c7219872e7b1f4"
-      user>(clojure.repl/doc hdfs-checksum)
-      -------------------------
-      hdfs-checksum.core/hdfs-checksum
-      ([path configuration])
-        Computes the checksum of a local file in a way
-        which matches how hadoop/hdfs computes
-        checksums for it's files.
-
-configuration is Hadoop's Configuration class. It should atleast have the
-following parameters set.
-
-* dfs.blocksize
-
-A good way to apply the necessary paramaters to configuration is to add hadoop's
-core-site.xml, hdfs-site.xml and mapred-site.xml to classpath before constructing
-Configuration object.
-
-      user>(use 'hdfs-checksum.core)
-      user> (file-checksum "hdfs://localhost:63372/user/rdsr/tmp/file" :MD5 configuration)
-      "7622214b8536afe7b89b1c6606069b0d"
-      user> (clojure.repl/doc file-checksum)
-      -------------------------
-      hdfs-checksum.core/file-checksum
-      ([path algorithm configuration])
-        Computes a standard checksum of a (hdfs) file.
-        The file is accessed through the hadoop
-        FileSystem api
-
-Here too, configuration is Hadoop's configuration class, though the above parameters
-are not necessary in this case.
+```clojure
+user> (use 'hdfs-checksum.core)
+nil
+user> (import 'org.apache.hadoop.conf.Configuration)
+org.apache.hadoop.conf.Configuration
+user> (def conf (Configuration.))
+#'user/conf
+user> (doc hdfs-checksum)
+-------------------------
+hdfs-checksum.core/hdfs-checksum
+([path conf])
+  Computes the checksum of a local file in a way
+   which matches how hadoop/hdfs computes
+   checksums for it's files.
+nil
+user> (hdfs-checksum "/tmp/file" conf)
+"38894e5706e4fa1acf2b125bb697cce9"
+user>
+user> (doc file-checksum)
+-------------------------
+hdfs-checksum.core/file-checksum
+([path algorithm conf])
+  Computes a standard checksum of a (hdfs) file.
+   The file is accessed through the hadoop
+   FileSystem api
+nil
+user> (file-checksum "hdfs://127.0.0.1:8020/tmp/tmp_file" :MD5 conf)
+"205951d1bcabb23be15e2d5c99f265bb"
+user>
+user> (doc block-checksums)
+-------------------------
+hdfs-checksum.core/block-checksums
+([path conf])
+  Returns checksum per block for a hdfs file
+nil
+user> (block-checksums "hdfs://127.0.0.1:8020/tmp/large_file" conf)
+{:bytes-per-crc 512, :crc-per-block 131072, :checksum-type #<Type CRC32C>, :checksums ({:id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]} {:id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})}
+user>
+```
