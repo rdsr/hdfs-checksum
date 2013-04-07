@@ -68,6 +68,6 @@ hdfs-checksum.core/block-checksums
 nil
 
 user> (block-checksums "hdfs://127.0.0.1:8020/tmp/large_file" conf)
-{:bytes-per-crc 512, :crc-per-block 131072, :checksum-type #<Type CRC32C>, :checksums ({:id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]} {:id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})}
+{:bytes-per-crc 512, :crc-per-block 131072, :checksum-type #<Type CRC32C>, :checksums ({:block-id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]} {:block-id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})}
 user>
 ```

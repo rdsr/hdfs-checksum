@@ -64,5 +64,5 @@
      :crc-per-block crc-per-block
      :checksum-type checksum-type
      :checksums (map (fn [{:strs [id md5 boundaries]}]
-                            {:id id :md5 md5 :boundaries (into [] boundaries)})
+                            {:block-id id :md5 md5 :boundaries (into [] boundaries)})
                           checksums)}))
