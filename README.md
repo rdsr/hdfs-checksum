@@ -27,10 +27,13 @@ The configuration should atleast have the following parameters set.
 ```clojure
 user> (use 'hdfs-checksum.core)
 nil
+
 user> (import 'org.apache.hadoop.conf.Configuration)
 org.apache.hadoop.conf.Configuration
 user> (def conf (Configuration.))
 #'user/conf
+
+
 user> (doc hdfs-checksum)
 -------------------------
 hdfs-checksum.core/hdfs-checksum
@@ -39,9 +42,11 @@ hdfs-checksum.core/hdfs-checksum
    which matches how hadoop/hdfs computes
    checksums for it's files.
 nil
+
 user> (hdfs-checksum "/tmp/file" conf)
 "38894e5706e4fa1acf2b125bb697cce9"
-user>
+
+
 user> (doc file-checksum)
 -------------------------
 hdfs-checksum.core/file-checksum
@@ -50,15 +55,18 @@ hdfs-checksum.core/file-checksum
    The file is accessed through the hadoop
    FileSystem api
 nil
+
 user> (file-checksum "hdfs://127.0.0.1:8020/tmp/tmp_file" :MD5 conf)
 "205951d1bcabb23be15e2d5c99f265bb"
-user>
+
+
 user> (doc block-checksums)
 -------------------------
 hdfs-checksum.core/block-checksums
 ([path conf])
   Returns checksum per block for a hdfs file
 nil
+
 user> (block-checksums "hdfs://127.0.0.1:8020/tmp/large_file" conf)
 {:bytes-per-crc 512, :crc-per-block 131072, :checksum-type #<Type CRC32C>, :checksums ({:id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]} {:id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})}
 user>
