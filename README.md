@@ -15,8 +15,8 @@ hdfs-checksum contains utility functions to
 
 
 ## Usage
-## lein uberjar
-## java -cp "target/*:conf" clojure.main
+* lein uberjar
+* java -cp "target/*:conf" clojure.main
 
 Make sure that the conf folder contains the hadoop cluster's configuration against which you want to work.
 The configuration should atleast have the following parameters set.
