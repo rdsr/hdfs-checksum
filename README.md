@@ -8,9 +8,9 @@ hdfs-checksum contains utility functions to
    * compute block level checksums for each block a hdfs file. The returned data structure is a map, something like
      {:bytes-per-crc 512
       :crc-per-block 131072
-      :checksum-type #<Type CRC32C>
-      :checksums ({:id 8228927946441106746, :md5 #<MD5Hash 21cd8bde61842fd239ca13e3513cc701>, :boundaries [0 67108864]}
-                  {:id 7028571474334329874, :md5 #<MD5Hash 29d072fe5be94218b3fec627a3c49dd7>, :boundaries [67108864 67108864]})
+      :checksum-type #\<Type CRC32C\>
+      :checksums ({:id 8228927946441106746, :md5 #\<MD5Hash 21cd8bde61842fd239ca13e3513cc701\>, :boundaries [0 67108864]}
+                  {:id 7028571474334329874, :md5 #\<MD5Hash 29d072fe5be94218b3fec627a3c49dd7\>, :boundaries [67108864 67108864]})
      }
 
 
