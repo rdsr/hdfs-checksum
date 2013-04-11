@@ -1,7 +1,7 @@
 #hdfs-checksum
 
 hdfs-checksum contains utility functions to
-   * compute md5 checksum of a hdfs file. The result would be such that as if you computed md5 of a local file. (Note: Filesystem.getFileChecksum() will not give the same checksum as this, the Filesytem API call will compute md5 of md5 of CRC32 checksums
+   * compute md5 checksum of a hdfs file. The result would be such that as if you ran md5sum on a hdfs file. (Note: Filesystem.getFileChecksum() will not give the same checksum as this, the Filesytem API call will compute md5 of md5 of CRC32 checksums
 
    * compute distributed (md5 of md5 of crc32 checksums) of a local file. The result would be such that as if you called Filesystem.getFileChecksum() on a local file
 
