@@ -23,7 +23,7 @@
       String.))
 
 (defn file-checksum
-  "Computes a standard checksum of a (hdfs) file.
+  "Computes a standard checksum of a hdfs file.
    The file is accessed through the hadoop
    FileSystem api"
   [path algorithm ^Configuration conf]
@@ -55,14 +55,14 @@
       (compute-checksum in md))))
 
 (defn block-checksums
-  "Returns checksum per block for a hdfs file"
+  "Returns checksums per block for a hdfs file"
   [path ^Configuration conf]
   (let [path (-> path URI. .getPath)
-        {:strs [bytes-per-crc crc-per-block checksum-type checksums] :as c}
+        {:strs [bytes-per-crc crcs-per-block checksum-type checksums] :as c}
         (Util/blockChecksums path conf)]
     {:bytes-per-crc bytes-per-crc
-     :crc-per-block crc-per-block
+     :crcs-per-block crcs-per-block
      :checksum-type checksum-type
-     :checksums (map (fn [{:strs [id md5 boundaries]}]
-                            {:block-id id :md5 md5 :boundaries (into [] boundaries)})
+     :checksums (map (fn [{:strs [block-id md5 boundaries]}]
+                            {:block-id block-id :md5 md5 :boundaries (into [] boundaries)})
                           checksums)}))

@@ -6,11 +6,13 @@
            [org.apache.commons.codec.binary Hex]))
 
 (defn crcs-per-block
-  [^Configuration configuration]
-  (let [bytes-per-crc (.getInt configuration "io.bytes.per.checksum" 512)
-        blocksize (or (.get configuration "dfs.blocksize")  ;; hadoop 0.23
-                      (.get configuration "dfs.block.size"))] ;; hadoop 0.20.x
-    (/ (Integer/parseInt blocksize) bytes-per-crc)))
+  [^Configuration conf]
+  (let [bytes-per-crc (.getInt conf "io.bytes.per.checksum" 512)
+        blocksize (or (.get conf "dfs.blocksize")  ;; hadoop 0.23
+                      (.get conf "dfs.block.size"))] ;; hadoop 0.20.x
+    (if (nil? blocksize)
+      (throw (IllegalArgumentException. "Block size not set"))
+             (/ (Integer/parseInt blocksize) bytes-per-crc))))
 
 (defn checksum->str
   "Utility method to extract checksum out
