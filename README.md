@@ -6,10 +6,12 @@ hdfs-checksum contains utility functions to
    * compute distributed (md5 of md5 of crc32 checksums) of a local file. The result would be such that as if you called Filesystem.getFileChecksum() on a local file
 
    * compute block level checksums for each block a hdfs file. The returned data structure is a map, something like
+```clojure
       {:bytes-per-crc 512,
        :crcs-per-block 131072,
        :checksum-type "CRC32C",
-       :checksums ({:block-id 8228927946441106746, :md5 "21cd8bde61842fd239ca13e3513cc701", :boundaries [0 67108864]} {:block-id 7028571474334329874, :md5 "29d072fe5be94218b3fec627a3c49dd7", :boundaries [67108864 67108864]})}
+       :checksums ({:block-id 8228927946441106746, :md5 "21cd8bde61842fd239ca13e3513cc701", :boundaries [0 67108864]} {:block-id      7028571474334329874, :md5 "29d072fe5be94218b3fec627a3c49dd7", :boundaries [67108864 67108864]})}
+```
 
 
 
