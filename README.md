@@ -10,7 +10,14 @@ hdfs-checksum contains utility functions to
       {:bytes-per-crc 512,
        :crcs-per-block 131072,
        :checksum-type "CRC32C",
-       :checksums ({:block-id 8228927946441106746, :md5 "21cd8bde61842fd239ca13e3513cc701", :boundaries [0 67108864]} {:block-id      7028571474334329874, :md5 "29d072fe5be94218b3fec627a3c49dd7", :boundaries [67108864 67108864]})}
+       :checksums (
+          {:block-id 8228927946441106746, 
+           :md5 "21cd8bde61842fd239ca13e3513cc701", 
+           :boundaries [0 67108864]} 
+          {:block-id 7028571474334329874, 
+           :md5 "29d072fe5be94218b3fec627a3c49dd7", 
+           :boundaries [67108864 67108864]}
+           )}
 ```
 
 
